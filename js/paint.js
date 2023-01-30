@@ -29,11 +29,23 @@ class PaintBrush {
         }
 
         PaintBrush.#instance = this;
-        
+
+        // brush body properties not same thing as brush props
+        this.body = {
+            x: null,
+            y: null,
+            color: 'white',
+            borderColor: 'black',
+            size: null,
+        }
+    
+
         this.x = null;
-        this.y = null;
-        this.pressed = null;
+        this.y = null,
+        this.color = null;
         this.size = null;
+
+        this.pressed = null;
         
         this.#init();
     }
@@ -47,6 +59,7 @@ class PaintBrush {
         this.x = event.offsetX;
         this.y = event.offsetY;
     }
+
 
     /**
      * Adds event to document.
