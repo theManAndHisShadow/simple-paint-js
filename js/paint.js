@@ -25,7 +25,7 @@ class PaintColorPalette {
 class PaintBrush {
     static #instance = null;
 
-    constructor(parent, size = 10){
+    constructor(parent, color = 'black', size = 10){
         if (PaintBrush.#instance) {
             return PaintBrush.#instance;
         }
@@ -47,7 +47,7 @@ class PaintBrush {
 
         this.x = null;
         this.y = null,
-        this.color = null;
+        this.color = color;
         this.size = size;
 
         this.pressed = null;
@@ -85,8 +85,8 @@ class PaintBrush {
      */
     #writeCoordsToInstance(event, intanceRef){
         let {offsetX, offsetY} = this.#calculateCanvasOffset();
-        this.x = event.offsetX + offsetX;
-        this.y = event.offsetY + offsetY;
+        this.x = event.offsetX + 7;
+        this.y = event.offsetY + 7;
 
         this.body.x = event.offsetX + offsetX;
         this.body.y = event.offsetY + offsetY;
@@ -111,6 +111,22 @@ class PaintBrush {
     }
 
     /**
+     * Draws on canvas.
+     */
+    draw(){
+        let c = this.parent.canvas.context;
+
+        c.beginPath();
+        c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
+        c.fillStyle = this.color;
+        c.fill();
+        // c.lineWidth = 5;
+        // c.strokeStyle = 'blue';
+        // c.stroke();
+        c.closePath();
+    }
+
+    /**
      * Creates brush element, add to brush.body and to DOM.
      */
     #createBrushNode(){
@@ -128,8 +144,9 @@ class PaintBrush {
     #init(){
         this.#createBrushNode();
         this.parent.canvas.node.addEventListener('mousemove', function(event){
-            PaintBrush.#instance.#moveBrushWithMouse()
             PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
+            PaintBrush.#instance.#moveBrushWithMouse();
+            PaintBrush.#instance.draw();
         });
     }
 }
