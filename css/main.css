@@ -1,0 +1,18 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#root {
+    background: #292929;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+#root canvas {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
