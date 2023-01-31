@@ -10,7 +10,7 @@ class PaintColorPalette {
             return PaintColorPalette.#instance;
         }
 
-        PaintColorPalette.#instance =  this;
+        PaintColorPalette.#instance = this;
 
         this.parent = parent;
     }
@@ -43,24 +43,36 @@ class PaintTools {
                 icon: "fa-paintbrush",
                 description: "Brush tool",
                 type: "toggle",
+                action: function(){
+                    PaintTools.#instance.parent.brush.setColor('black');
+                },
             },
 
             "eraser": {
                 icon: "fa-eraser",
                 description: "Eraser tool",
-                type: "toggle"
+                type: "toggle",
+                action: function(){
+                    PaintTools.#instance.parent.brush.setColor('white');
+                },
             },
 
             "color-picker": {
                 icon: "fa-eye-dropper",
                 description: "Color picker",
                 type: "toggle",
+                action: function(){
+                    // soon
+                },
             },
 
             "new-canvas": {
                 icon: "fa-file",
                 description: "New canvas",
                 type: "click",
+                action: function(){
+                    PaintTools.#instance.parent.canvas.clear();
+                },
             },
         }
 
@@ -100,7 +112,9 @@ class PaintTools {
             
             // actions by item clicking
             toolElement.addEventListener('click', function(){
-                
+                // execute tool action
+                tools[tool].action();
+
                 if(tools[tool].type === "toggle"){
                     let className = 'selected';
 
@@ -223,6 +237,10 @@ class PaintBrush {
         `;
     }
 
+    setColor(color){
+        this.color = color;
+    }
+
     /**
      * Draws on canvas.
      */
@@ -234,6 +252,7 @@ class PaintBrush {
 
             let c = this.parent.canvas.context;
             let traceBufferNotEmpty = this.trace.length > 1;
+
 
             c.beginPath();
             c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
@@ -247,6 +266,7 @@ class PaintBrush {
                 let currentPoint = this.trace[1];
                 
                 // glue a points using trace points
+                c.strokeStyle = this.color;
                 c.beginPath();
                 c.moveTo(lastPoint[0], lastPoint[1]);
                 c.lineTo(currentPoint[0], currentPoint[1]);
