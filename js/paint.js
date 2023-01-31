@@ -50,7 +50,7 @@ class PaintBrush {
         this.color = color;
         this.size = size;
 
-        this.pressed = null;
+        this.isPressed = false;
         
         this.#init();
     }
@@ -114,16 +114,18 @@ class PaintBrush {
      * Draws on canvas.
      */
     draw(){
-        let c = this.parent.canvas.context;
+        if(PaintBrush.#instance.isPressed){
+            let c = this.parent.canvas.context;
 
-        c.beginPath();
-        c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
-        c.fillStyle = this.color;
-        c.fill();
-        // c.lineWidth = 5;
-        // c.strokeStyle = 'blue';
-        // c.stroke();
-        c.closePath();
+            c.beginPath();
+            c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
+            c.fillStyle = this.color;
+            c.fill();
+            // c.lineWidth = 5;
+            // c.strokeStyle = 'blue';
+            // c.stroke();
+            c.closePath(); 
+        }
     }
 
     /**
@@ -144,6 +146,8 @@ class PaintBrush {
     #init(){
         this.#createBrushNode();
         this.parent.canvas.node.addEventListener('mousemove', function(event){
+            PaintBrush.#instance.isPressed = event.which === 1 ? true : false;
+
             PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
             PaintBrush.#instance.#moveBrushWithMouse();
             PaintBrush.#instance.draw();
