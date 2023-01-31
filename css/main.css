@@ -32,4 +32,14 @@ body {
 
 .tool__items {
     cursor: pointer;
+    padding-top: 2px;
+}
+
+.tool__items div {
+    width: fit-content;
+    padding: 5px;
+    padding-right: 8px;
+    margin: 3px auto;
+    color: white;
+    border-radius: 2px;
 }
