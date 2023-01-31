@@ -105,7 +105,7 @@ class PaintTools {
              *     action: callback function with access to: input - value, click, toggle - HTMLElement,
              * }
              * */ 
-            
+
             "resize": {
                 description: "Resize brush",
                 type: "input",
@@ -131,6 +131,29 @@ class PaintTools {
                 type: "click",
                 action: function(button){
                     
+                    let counterBadge = document.querySelector('#symmetry-tool__counter');
+                    let defaultValue = 2;
+                    let maxValue = 10;
+                    let n;
+                    
+                    
+                    if(!counterBadge) {
+                        counterBadge = document.createElement('span');
+                        counterBadge.id = "symmetry-tool__counter";
+                        counterBadge.classList.add('tool-counter');
+                        counterBadge.setAttribute('data-counter-value', defaultValue);
+                        counterBadge.textContent = defaultValue;
+                        button.appendChild(counterBadge);
+
+                    } else {
+                        n = Number(counterBadge.getAttribute('data-counter-value'));
+                        n = n >= maxValue ? defaultValue : n + 1;
+
+                        counterBadge.textContent = n;
+                        counterBadge.setAttribute('data-counter-value', n);
+                    }
+
+
                 },
             },
 

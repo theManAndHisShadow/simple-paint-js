@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: 'Roboto', sans-serif;
 }
 
 #root {
@@ -97,3 +98,15 @@ body {
     background: #a4a4a440;
     padding-left: 10px;
  }
+
+.tool-counter{
+    position: absolute;
+    border-radius: 4px;
+    background-color: #ffffff30;
+    padding: 2px 3px 1px 3px;
+    color: white;
+    z-index: 9;
+    left: 27px;
+    bottom: 68px;
+    font-size: 10px;
+}
