@@ -26,31 +26,60 @@ body {
     min-height: 100px;
     left: 10px;
     top: 50%;
-    transform: translate(0, -48.1%);
+    transform: translate(0, -49.1%);
     background: #191d2b;
     border-radius: 5px;
     border: 1px solid #414141;
 }
 
-.tool__items {
+.tools__buttons-container {
     cursor: pointer;
     padding-top: 2px;
 }
 
-.tool__items div {
+.tools__palette-container {
+    border-bottom: 1px solid #414141;
+    width: 36px;
+    margin: 0 auto;
+    padding-bottom: 7px;
+    margin-bottom: 2px;
+}
+
+.tools__buttons-container div {
     width: fit-content;
+    color: white;
     padding: 5px;
     padding-right: 8px;
+}
+
+.tools__buttons-container div,
+.tools__palette-container div {
     margin: 3px auto;
-    color: white;
     border-radius: 5px;
 }
 
-.tool__items  div[data-type="toggle"].selected {
+.tools__palette-container div{
+    width: 1px;
+    height: 1px;
+    padding: 7px;
+    margin-top: 8px;
+    border: 1px solid #ffffff47;
+    cursor: pointer;
+    transition: 0.3s ease;
+    position: relative;
+    left: 0px;
+}
+
+.tools__palette-container  div.selected__color{
+    width: 10px;
+    left: 3px;
+}
+
+.tools__buttons-container  div[data-type="toggle"].selected__tool {
     background: #a4a4a440;
  }
 
- .tool__items div[data-type="click"]:active {
+ .tools__buttons-container div[data-type="click"]:active {
     background: #a4a4a440;
     padding-left: 10px;
  }
