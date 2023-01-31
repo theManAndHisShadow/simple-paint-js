@@ -25,7 +25,7 @@ class PaintColorPalette {
 class PaintBrush {
     static #instance = null;
 
-    constructor(parent, color = 'black', size = 10){
+    constructor(parent, color = 'black', size = 5){
         if (PaintBrush.#instance) {
             return PaintBrush.#instance;
         }
@@ -47,6 +47,9 @@ class PaintBrush {
 
         this.x = null;
         this.y = null,
+
+        this.trace = [];
+
         this.color = color;
         this.size = size;
 
@@ -114,17 +117,39 @@ class PaintBrush {
      * Draws on canvas.
      */
     draw(){
+        // draw only when user press mouse button
         if(PaintBrush.#instance.isPressed){
+            // save current coords to trace buffer
+            this.trace.push([this.x, this.y]);
+
             let c = this.parent.canvas.context;
+            let traceBufferNotEmpty = this.trace.length > 1;
 
             c.beginPath();
             c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
             c.fillStyle = this.color;
             c.fill();
-            // c.lineWidth = 5;
-            // c.strokeStyle = 'blue';
-            // c.stroke();
             c.closePath(); 
+
+            // if trace buffer not empty
+            if(traceBufferNotEmpty) {
+                let lastPoint = this.trace[0];
+                let currentPoint = this.trace[1];
+                
+                // glue a points using trace points
+                c.beginPath();
+                c.moveTo(lastPoint[0], lastPoint[1]);
+                c.lineTo(currentPoint[0], currentPoint[1]);
+                c.lineWidth = 6;
+                c.stroke(); 
+                c.closePath(); 
+                
+                // delete trace prev point
+                this.trace.shift();
+            }
+        } else {
+            // if user released mouse button - clean buffer
+            this.trace = [];
         }
     }
 
