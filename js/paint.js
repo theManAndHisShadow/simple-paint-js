@@ -117,7 +117,7 @@ class PaintTools {
             "symmetry-tool": {
                 icon: "fa-asterisk",
                 description: "Symmetry drawning tool",
-                type: "toggle",
+                type: "click",
                 action: function(){
                     
                 },
