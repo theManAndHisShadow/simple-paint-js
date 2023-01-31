@@ -20,6 +20,28 @@ class PaintColorPalette {
 
 /**
  * Singleton.
+ * All paint tools controls by this class.
+ */
+class PaintTools {
+    static #instance = null;
+
+    constructor(parent){
+        if (PaintTools.#instance) {
+            return PaintTools.#instance;
+        }
+
+        PaintTools.#instance =  this;
+
+        this.parent = parent;
+
+        this.pallete = new PaintColorPalette(this);
+    }
+}
+
+
+
+/**
+ * Singleton.
  * Stores brush coordinates, state and brush color.
  */
 class PaintBrush {
@@ -255,7 +277,7 @@ class Paint {
 
         this.canvas = new PaintCanvas(this, width, height);
         this.brush = new PaintBrush(this);
-        this.pallete = new PaintColorPalette(this);
+        this.tools = new PaintTools(this);
 
         this.#init();
     }
