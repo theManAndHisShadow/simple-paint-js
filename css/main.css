@@ -17,3 +17,19 @@ body {
     transform: translate(-50%, -50%);
     cursor: none;
 }
+
+#paint__tools {
+    position: absolute;
+    min-width: 50px;
+    min-height: 100px;
+    left: 10px;
+    top: 50%;
+    transform: translate(0, -50%);
+    background: #191d2b;
+    border-radius: 5px;
+    border: 1px solid #414141;
+}
+
+.tool__items {
+    cursor: pointer;
+}

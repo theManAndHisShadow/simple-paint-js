@@ -34,7 +34,48 @@ class PaintTools {
 
         this.parent = parent;
 
+        this.node = this.#createNode(),
+
         this.pallete = new PaintColorPalette(this);
+
+        this.selected = 'brush';
+
+        this.#addTools();
+    }
+
+    #createNode(){
+        let toolsElement = document.createElement('div');
+
+        toolsElement.id = 'paint__tools'
+
+        return toolsElement;
+    }
+
+    #addTools(){
+        let tools = {
+            "brush": "",
+            "eraser": "",
+            "canvas-reset": "",
+        };
+
+        let toolNames = Object.keys(tools);
+
+        let toolsContainer = document.createElement('div');
+        toolsContainer.classList = "tool__items";
+
+        PaintTools.#instance.node.appendChild(toolsContainer);
+
+        toolNames.forEach(tool => {
+            let toolElement = document.createElement('div');
+            toolElement.id = tool;
+            toolElement.innerText = tool;
+            
+            toolsContainer.appendChild(toolElement);
+            
+            toolElement.addEventListener('click', function(){
+                PaintTools.#instance.selected = tool;
+            })
+        });
     }
 }
 
@@ -284,5 +325,6 @@ class Paint {
 
     #init(){
         this.parentNode.appendChild(this.canvas.node);
+        this.parentNode.appendChild(this.tools.node);
     }
 }
