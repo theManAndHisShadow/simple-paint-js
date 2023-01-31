@@ -1,6 +1,6 @@
 let PaintApp = new Paint({
     width: 800,
-    height: 700,
+    height: 600,
     appendTo: document.querySelector('#root'),
 });
 
