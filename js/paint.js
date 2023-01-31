@@ -95,12 +95,31 @@ class PaintTools {
         this.pallete = new PaintColorPalette(this);
 
         this.data = {
+            "resize": {
+                description: "Resize brush",
+                type: "input",
+                render: '<input placeholder="5">',
+                action: function(value){
+                    console.log(value);
+                    PaintTools.#instance.parent.brush.setSize(value);
+                },
+            },
+
             "brush": {
                 icon: "fa-paintbrush",
                 description: "Brush tool",
                 type: "toggle",
                 action: function(){
                     PaintTools.#instance.parent.brush.setColor(PaintTools.#instance.pallete.selected);
+                },
+            },
+
+            "symmetry-tool": {
+                icon: "fa-asterisk",
+                description: "Symmetry drawning tool",
+                type: "toggle",
+                action: function(){
+                    
                 },
             },
 
@@ -164,11 +183,32 @@ class PaintTools {
 
             toolElement.setAttribute('title',  tools[tool].description);
             toolElement.setAttribute('data-type',  tools[tool].type);
-            toolIcon.classList = 'fa-solid ' + tools[tool].icon;
+            
+            if(tools[tool].render) {
+                toolElement.innerHTML = tools[tool].render;
+            } else {
+                toolIcon.classList = 'fa-solid ' + tools[tool].icon;
+            }
             
             toolElement.appendChild(toolIcon);
             toolsContainer.appendChild(toolElement);
-            
+
+            // use diff event to diff tool buttons types
+            if(tools[tool].type === 'input'){
+                toolElement.children[0].addEventListener('change', function(){
+                    // clear input
+                    let raw_value = toolElement.children[0].value;
+                    let value = Number(raw_value.replace(/([a-zA-Z]|[а-яёА-ЯЁ]|\s)/gm, ''));
+
+                    // size range limitation
+                    value = value >= 50 ? 50 : value;
+                    value = value <= 0 ? 1 : value;
+
+                    toolElement.children[0].value = value;
+
+                    tools[tool].action(value);
+                });
+            } else {
             // actions by item clicking
             toolElement.addEventListener('click', function(){
                 // execute tool action
@@ -195,6 +235,7 @@ class PaintTools {
                     }
                 }
             })
+            }
         });
     }
 
@@ -202,7 +243,7 @@ class PaintTools {
         let colors = this.node.children[0];
         let firstColor = colors.children[0];
         let tools = this.node.children[1];
-        let firstTool = tools.children[0];
+        let firstTool = tools.children[1];
 
         firstColor.click();
         firstTool.click();
@@ -310,6 +351,11 @@ class PaintBrush {
         this.color = color;
     }
 
+    setSize(size){
+        this.size = size;
+        this.body.size = size;
+    }
+
     /**
      * Draws on canvas.
      */
@@ -339,9 +385,9 @@ class PaintBrush {
                 c.beginPath();
                 c.moveTo(lastPoint[0], lastPoint[1]);
                 c.lineTo(currentPoint[0], currentPoint[1]);
-                c.lineWidth = 6;
+                c.lineWidth = this.size < 6 ? this.size + 2 : this.size;
                 c.stroke(); 
-                c.closePath(); 
+                // c.closePath(); 
                 
                 // delete trace prev point
                 this.trace.shift();

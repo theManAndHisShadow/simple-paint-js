@@ -45,6 +45,20 @@ body {
     margin-bottom: 2px;
 }
 
+.tools__buttons-container input {
+    max-width: 14px;
+    background: #141721;
+    border: 1px solid #414141;
+    border-radius: 5px;
+    padding: 3px 4px;
+    text-align: center;
+    color: white;
+}
+
+.tools__buttons-container input:focus {
+    outline: none;
+}
+
 .tools__buttons-container div {
     width: fit-content;
     color: white;
