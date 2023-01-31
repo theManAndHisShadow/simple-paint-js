@@ -132,14 +132,14 @@ class PaintTools {
                 },
             },
 
-            "color-picker": {
-                icon: "fa-eye-dropper",
-                description: "Color picker",
-                type: "toggle",
-                action: function(){
-                    // soon
-                },
-            },
+            // "color-picker": {
+            //     icon: "fa-eye-dropper",
+            //     description: "Color picker",
+            //     type: "toggle",
+            //     action: function(){
+            //         // soon
+            //     },
+            // },
 
             "new-canvas": {
                 icon: "fa-file",
