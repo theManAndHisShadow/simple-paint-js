@@ -38,6 +38,22 @@ class PaintTools {
 
         this.pallete = new PaintColorPalette(this);
 
+        this.data = {
+            "brush": {
+                icon: "fa-paintbrush",
+                description: "Brush tool",
+            },
+            "eraser": {
+                icon: "fa-eraser",
+                description: "Eraser tool",
+            },
+
+            "new-canvas": {
+                icon: "fa-file",
+                description: "New canvas",
+            },
+        }
+
         this.selected = 'brush';
 
         this.#addTools();
@@ -52,11 +68,7 @@ class PaintTools {
     }
 
     #addTools(){
-        let tools = {
-            "brush": "fa-paintbrush",
-            "eraser": "fa-eraser",
-            "canvas-reset": "fa-file",
-        };
+        let tools = this.data;
 
         let toolNames = Object.keys(tools);
 
@@ -66,11 +78,13 @@ class PaintTools {
         PaintTools.#instance.node.appendChild(toolsContainer);
 
         toolNames.forEach(tool => {
-            let toolElement = document.createElement('i');
-            toolElement.classList = "material-symbols-outlined";
-            toolElement.id = tool;
-            toolElement.classList = 'fa-solid ' + tools[tool];
+            let toolElement = document.createElement('div');
+            let toolIcon = document.createElement('i');
+
+            toolElement.setAttribute('title',  tools[tool].description);
+            toolIcon.classList = 'fa-solid ' + tools[tool].icon;
             
+            toolElement.appendChild(toolIcon);
             toolsContainer.appendChild(toolElement);
             
             toolElement.addEventListener('click', function(){
