@@ -42,19 +42,29 @@ class PaintTools {
             "brush": {
                 icon: "fa-paintbrush",
                 description: "Brush tool",
+                type: "toggle",
             },
+
             "eraser": {
                 icon: "fa-eraser",
                 description: "Eraser tool",
+                type: "toggle"
+            },
+
+            "color-picker": {
+                icon: "fa-eye-dropper",
+                description: "Color picker",
+                type: "toggle",
             },
 
             "new-canvas": {
                 icon: "fa-file",
                 description: "New canvas",
+                type: "click",
             },
         }
 
-        this.selected = 'brush';
+        this.selected = null;
 
         this.#addTools();
     }
@@ -82,13 +92,35 @@ class PaintTools {
             let toolIcon = document.createElement('i');
 
             toolElement.setAttribute('title',  tools[tool].description);
+            toolElement.setAttribute('data-type',  tools[tool].type);
             toolIcon.classList = 'fa-solid ' + tools[tool].icon;
             
             toolElement.appendChild(toolIcon);
             toolsContainer.appendChild(toolElement);
             
+            // actions by item clicking
             toolElement.addEventListener('click', function(){
-                PaintTools.#instance.selected = tool;
+                
+                if(tools[tool].type === "toggle"){
+                    let className = 'selected';
+
+                    // get all selected items
+                    let allSelected = Array.from(document.getElementsByClassName(className));
+
+                    // de-select all
+                    allSelected.forEach(selected => { selected.classList.remove(className)});
+
+                    // select item by clicking
+                    let selected = toolElement.classList.contains(className);
+                    toolElement.classList.add(className);
+
+                    // set selected tool
+                    if(selected){
+                        PaintTools.#instance.selected = null
+                    } else {
+                        PaintTools.#instance.selected = tool;
+                    }
+                }
             })
         });
     }

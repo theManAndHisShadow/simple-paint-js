@@ -41,5 +41,14 @@ body {
     padding-right: 8px;
     margin: 3px auto;
     color: white;
-    border-radius: 2px;
+    border-radius: 5px;
 }
+
+.tool__items  div[data-type="toggle"].selected {
+    background: #a4a4a440;
+ }
+
+ .tool__items div[data-type="click"]:active {
+    background: #a4a4a440;
+    padding-left: 10px;
+ }
