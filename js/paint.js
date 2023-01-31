@@ -95,6 +95,17 @@ class PaintTools {
         this.pallete = new PaintColorPalette(this);
 
         this.data = {
+            /**
+             * Example
+             * "toolName": {
+             *     icon: Button icon (css class for font awesome)
+             *     description: Button scription,
+             *     type: input | toggle | click - Type of interaction,
+             *     render: Additional element inside',
+             *     action: callback function with access to: input - value, click, toggle - HTMLElement,
+             * }
+             * */ 
+            
             "resize": {
                 description: "Resize brush",
                 type: "input",
@@ -109,7 +120,7 @@ class PaintTools {
                 icon: "fa-paintbrush",
                 description: "Brush tool",
                 type: "toggle",
-                action: function(){
+                action: function(button){
                     PaintTools.#instance.parent.brush.setColor(PaintTools.#instance.pallete.selected);
                 },
             },
@@ -118,7 +129,7 @@ class PaintTools {
                 icon: "fa-asterisk",
                 description: "Symmetry drawning tool",
                 type: "click",
-                action: function(){
+                action: function(button){
                     
                 },
             },
@@ -127,7 +138,7 @@ class PaintTools {
                 icon: "fa-eraser",
                 description: "Eraser tool",
                 type: "toggle",
-                action: function(){
+                action: function(button){
                     PaintTools.#instance.parent.brush.setColor('white');
                 },
             },
@@ -212,7 +223,7 @@ class PaintTools {
             // actions by item clicking
             toolElement.addEventListener('click', function(){
                 // execute tool action
-                tools[tool].action();
+                tools[tool].action(toolElement);
 
                 if(tools[tool].type === "toggle"){
                     let className = 'selected__tool';
