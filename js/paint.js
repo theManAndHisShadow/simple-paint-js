@@ -53,9 +53,9 @@ class PaintTools {
 
     #addTools(){
         let tools = {
-            "brush": "",
-            "eraser": "",
-            "canvas-reset": "",
+            "brush": "fa-paintbrush",
+            "eraser": "fa-eraser",
+            "canvas-reset": "fa-file",
         };
 
         let toolNames = Object.keys(tools);
@@ -66,9 +66,10 @@ class PaintTools {
         PaintTools.#instance.node.appendChild(toolsContainer);
 
         toolNames.forEach(tool => {
-            let toolElement = document.createElement('div');
+            let toolElement = document.createElement('i');
+            toolElement.classList = "material-symbols-outlined";
             toolElement.id = tool;
-            toolElement.innerText = tool;
+            toolElement.classList = 'fa-solid ' + tools[tool];
             
             toolsContainer.appendChild(toolElement);
             
