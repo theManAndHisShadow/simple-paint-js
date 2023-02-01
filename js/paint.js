@@ -370,13 +370,13 @@ class PaintBrush {
 
         this.body.node.style  = `
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: ${this.body.size + 3}px;
+            height: ${this.body.size + 3}px;
             background: ${this.body.color};
             border-radius: 100%;
             border: 1px solid ${this.body.borderColor};
-            left: ${this.body.x}px;
-            top: ${this.body.y}px;
+            left: ${this.body.x - (this.body.size / 2) + 3}px;
+            top: ${this.body.y - (this.body.size / 2) + 3}px;
             z-index: 999;
         `;
     }
