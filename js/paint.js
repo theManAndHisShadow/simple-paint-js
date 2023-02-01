@@ -347,8 +347,8 @@ class PaintBrush {
      */
     #writeCoordsToInstance(event, intanceRef){
         let {offsetX, offsetY} = this.#calculateCanvasOffset();
-        this.x = event.offsetX + 7;
-        this.y = event.offsetY + 7;
+        this.x = event.offsetX;
+        this.y = event.offsetY;
     }
 
 
