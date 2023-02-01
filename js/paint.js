@@ -383,7 +383,7 @@ class PaintBrush {
                 c.lineTo(currentPoint[0], currentPoint[1]);
                 c.lineCap = "round";
                 c.lineJoin = "round";
-                c.lineWidth = this.size < 6 ? this.size + 2 : this.size;
+                c.lineWidth = this.size;
                 c.stroke(); 
                 
                 // delete trace prev point
@@ -412,7 +412,7 @@ class PaintBrush {
      * Adds event to document.
      */
     #init(){
-        this.parent.canvas.node.addEventListener('mousedown', function(event){
+        this.parent.canvas.node.addEventListener('mouseup', function(event){
             PaintBrush.#instance.isPressed = event.which === 1 ? true : false;
 
             PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
