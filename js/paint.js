@@ -302,16 +302,6 @@ class PaintBrush {
 
         this.parent = parent;
 
-        // brush body properties not same thing as brush props
-        this.body = {
-            node: null,
-            x: null,
-            y: null,
-            color: 'white',
-            borderColor: 'black',
-            size: size,
-        }
-        
 
         this.x = null;
         this.y = null,
@@ -358,28 +348,8 @@ class PaintBrush {
         let {offsetX, offsetY} = this.#calculateCanvasOffset();
         this.x = event.offsetX + 7;
         this.y = event.offsetY + 7;
-
-        this.body.x = event.offsetX + offsetX;
-        this.body.y = event.offsetY + offsetY;
     }
 
-    /**
-     * Method sticks brush to mouse pointer.
-     */
-    #moveBrushWithMouse(){
-
-        this.body.node.style  = `
-            position: absolute;
-            width: ${this.body.size + 3}px;
-            height: ${this.body.size + 3}px;
-            background: ${this.body.color};
-            border-radius: 100%;
-            border: 1px solid ${this.body.borderColor};
-            left: ${this.body.x - (this.body.size / 2) + 3}px;
-            top: ${this.body.y - (this.body.size / 2) + 3}px;
-            z-index: 999;
-        `;
-    }
 
     setColor(color){
         this.color = color;
@@ -387,30 +357,21 @@ class PaintBrush {
 
     setSize(size){
         this.size = size;
-        this.body.size = size;
     }
 
     /**
      * Draws on canvas.
      */
-    draw(){
+    drawTrace(){
         // draw only when user press mouse button
         if(PaintBrush.#instance.isPressed){
             // save current coords to trace buffer
             this.trace.push([this.x, this.y]);
 
             let c = this.parent.canvas.context;
-            let traceBufferNotEmpty = this.trace.length > 1;
 
-
-            c.beginPath();
-            c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
-            c.fillStyle = this.color;
-            c.fill();
-            c.closePath(); 
-
-            // if trace buffer not empty
-            if(traceBufferNotEmpty) {
+            console.log(this.trace);
+            if(this.trace.length > 1) {
                 let lastPoint = this.trace[0];
                 let currentPoint = this.trace[1];
                 
@@ -419,9 +380,10 @@ class PaintBrush {
                 c.beginPath();
                 c.moveTo(lastPoint[0], lastPoint[1]);
                 c.lineTo(currentPoint[0], currentPoint[1]);
+                c.lineCap = "round";
+                c.lineJoin = "round";
                 c.lineWidth = this.size < 6 ? this.size + 2 : this.size;
                 c.stroke(); 
-                // c.closePath(); 
                 
                 // delete trace prev point
                 this.trace.shift();
@@ -432,29 +394,35 @@ class PaintBrush {
         }
     }
 
-    /**
-     * Creates brush element, add to brush.body and to DOM.
-     */
-    #createBrushNode(){
-        let brushElement = document.createElement('div');
-
-        brushElement.id = 'paint__brush';
-        this.body.node = brushElement;
-
-        this.parent.parentNode.appendChild(brushElement);
+    drawDot(){
+        if(PaintBrush.#instance.isPressed){
+            let c = this.parent.canvas.context;
+            
+            c.beginPath();
+                c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
+                c.fillStyle = this.color;
+                c.fill();
+                c.closePath(); 
+        };
     }
+
 
     /**
      * Adds event to document.
      */
     #init(){
-        this.#createBrushNode();
+        this.parent.canvas.node.addEventListener('mousedown', function(event){
+            PaintBrush.#instance.isPressed = event.which === 1 ? true : false;
+
+            PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
+            PaintBrush.#instance.drawDot();
+        });
+
         this.parent.canvas.node.addEventListener('mousemove', function(event){
             PaintBrush.#instance.isPressed = event.which === 1 ? true : false;
 
             PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
-            PaintBrush.#instance.#moveBrushWithMouse();
-            PaintBrush.#instance.draw();
+            PaintBrush.#instance.drawTrace();
         });
     }
 }
