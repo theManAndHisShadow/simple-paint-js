@@ -109,7 +109,7 @@ class PaintTools {
             "resize": {
                 description: "Resize brush",
                 type: "input",
-                render: '<input placeholder="5">',
+                render: '<input placeholder="2">',
                 action: function(inputNode, value){
                     let maxSize = 99;
 
@@ -137,10 +137,13 @@ class PaintTools {
                 description: "Symmetry drawning tool",
                 type: "click",
                 action: function(button){
-                    
+                    let self = PaintTools.#instance;
+                    let canvas = self.parent.canvas;
+
                     let counterBadge = document.querySelector('#symmetry-tool__counter');
-                    let defaultValue = 2;
+                    let defaultValue = 1;
                     let maxValue = 10;
+                    let circle = 360;
                     let n;
                     
                     
@@ -152,15 +155,39 @@ class PaintTools {
                         counterBadge.textContent = defaultValue;
                         button.appendChild(counterBadge);
 
+                        
+                        canvas.node.addEventListener('draw', ()=> {
+                            let s = canvas.symmetryAxes;
+                            let alpha = circle / s;
+                            let cx = canvas.getCenter()[0]
+                            let cy = canvas.getCenter()[1];
+                            let brush = self.parent.brush;
+                            let x = brush.x;
+                            let y = brush.y;
+                            
+                            let sectorAlpha = 360 - alpha;
+                            for(let i = 0; i <= s; i++){
+                                sectorAlpha -= alpha;
+
+                                let rotatedDot = canvas.rotate(cx, cy, x, y, sectorAlpha);
+
+                                if(brush.trace.length > 0){
+                                    brush.drawMirrorTrace(rotatedDot[0], rotatedDot[1], i)
+                                } else {
+                                    brush.drawDot(rotatedDot[0], rotatedDot[1]);
+                                }
+                            }
+                        });
+
                     } else {
                         n = Number(counterBadge.getAttribute('data-counter-value'));
                         n = n >= maxValue ? defaultValue : n + 1;
 
+
                         counterBadge.textContent = n;
+                        canvas.symmetryAxes = n;
                         counterBadge.setAttribute('data-counter-value', n);
                     }
-
-
                 },
             },
 
@@ -172,15 +199,6 @@ class PaintTools {
                     PaintTools.#instance.parent.brush.setColor('white');
                 },
             },
-
-            // "color-picker": {
-            //     icon: "fa-eye-dropper",
-            //     description: "Color picker",
-            //     type: "toggle",
-            //     action: function(){
-            //         // soon
-            //     },
-            // },
 
             "new-canvas": {
                 icon: "fa-file",
@@ -294,7 +312,7 @@ class PaintTools {
 class PaintBrush {
     static #instance = null;
 
-    constructor(parent, color = 'black', size = 5){
+    constructor(parent, color = 'black', size = 2){
         if (PaintBrush.#instance) {
             return PaintBrush.#instance;
         }
@@ -308,11 +326,16 @@ class PaintBrush {
         this.y = null,
 
         this.trace = [];
+        this.mirrorTrace = [];
 
         this.color = color;
         this.size = size;
 
         this.isPressed = false;
+
+        this.events = {
+            ondraw: new CustomEvent('draw'),
+        }
         
         this.#init();
     }
@@ -346,64 +369,150 @@ class PaintBrush {
      * @param {classRef} intanceRef Reference to class instance
      */
     #writeCoordsToInstance(event, intanceRef){
-        let {offsetX, offsetY} = this.#calculateCanvasOffset();
         this.x = event.offsetX;
         this.y = event.offsetY;
     }
 
-
+    /**
+     * Changes brush color.
+     * @param {string} color 
+     */
     setColor(color){
         this.color = color;
     }
 
+    /**
+     * Changes brush size.
+     * @param {number} size 
+     */
     setSize(size){
         this.size = size;
     }
 
     /**
-     * Draws on canvas.
+     * Draws brush trace line.
+     * @param {number} x trace point x 
+     * @param {number} y trace point y
      */
-    drawTrace(){
+    drawTrace(x, y){
+        let self = PaintBrush.#instance;
+
+        x = x || self.x;
+        y = y || self.y;
+
+        let canvas = self.parent.canvas;
+        let c = canvas.context;
+
         // draw only when user press mouse button
-        if(PaintBrush.#instance.isPressed){
-            // save current coords to trace buffer
-            this.trace.push([this.x, this.y]);
-
-            let c = this.parent.canvas.context;
-
-            console.log(this.trace);
-            if(this.trace.length > 1) {
-                let lastPoint = this.trace[0];
-                let currentPoint = this.trace[1];
+        if(self.isPressed === true){
+            try {
+                canvas.node.dispatchEvent(self.events.ondraw);
+            } catch (error) {
                 
-                // glue a points using trace points
-                c.strokeStyle = this.color;
-                c.beginPath();
-                c.moveTo(lastPoint[0], lastPoint[1]);
-                c.lineTo(currentPoint[0], currentPoint[1]);
+            }
+
+            // save current coords to trace buffer
+            self.trace.push([x, y]);
+
+            if(self.trace.length > 1) {
+                let lastPoint = self.trace[0];
+                let currentPoint = self.trace[1];
+                
+                c.strokeStyle = self.color;
                 c.lineCap = "round";
                 c.lineJoin = "round";
-                c.lineWidth = this.size;
-                c.stroke(); 
+                c.lineWidth = self.size;
+                
+                let line = new Path2D();
+                line.moveTo(lastPoint[0], lastPoint[1]);
+                line.lineTo(currentPoint[0], currentPoint[1]);
+                
+                c.stroke(line); 
                 
                 // delete trace prev point
-                this.trace.shift();
+                self.trace.shift();
             }
         } else {
-            // if user released mouse button - clean buffer
-            this.trace = [];
+            // if user released mouse button - clean buffers
+            self.trace = [];
+            self.mirrorTrace = [];
         }
     }
 
-    drawDot(){
-        if(PaintBrush.#instance.isPressed){
-            let c = this.parent.canvas.context;
-            
+    /**
+     * Draws a symmetrical trace of the main brush
+     * @param {number} x mirror trace point x
+     * @param {number} y mirror trace point y
+     * @param {number} n mirror-trace index (axis number)
+     */
+    drawMirrorTrace(x, y, n){
+        let self = PaintBrush.#instance;
+        let canvas = self.parent.canvas;
+        let c = canvas.context;
+        
+        x = x || self.x;
+        y = y || self.y;
+        n = n || 0;
+        
+        
+        // draw only when user press mouse button
+        if(self.isPressed === true){
+            // save current coords to mirrorTrace buffer
+            if(self.mirrorTrace[n]){
+                self.mirrorTrace[n].push([x, y]);
+            } else {
+                self.mirrorTrace[n] = [];
+            }
+
+
+            self.mirrorTrace.forEach(singleTrace => {
+                if(singleTrace.length > 1) {
+                    let lastPoint = singleTrace[0];
+                    let currentPoint = singleTrace[1];
+                    
+                    c.strokeStyle = self.color;
+                    c.lineCap = "round";
+                    c.lineJoin = "round";
+                    c.lineWidth = self.size;
+                    
+                    let line = new Path2D();
+                    line.moveTo(lastPoint[0], lastPoint[1]);
+                    line.lineTo(currentPoint[0], currentPoint[1]);
+                    
+                    c.stroke(line); 
+                    
+                    // delete trace prev point
+                    self.mirrorTrace[n].shift();
+                }
+            });
+        }
+    }
+
+    /**
+     * Draws dot at canvas.
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} size dot radius (size)
+     */
+    drawDot(x, y, size){
+        x = x || this.x;
+        y = y || this.y;
+        size = size || this.size;
+
+        let self = PaintBrush.#instance;
+        let canvas =  self.parent.canvas;
+        let c = canvas.context;
+
+        if(self.isPressed){
+            try {
+                canvas.node.dispatchEvent(self.events.ondraw);     
+            } catch (error) {}
+
             c.beginPath();
-                c.arc(this.x, this.y, this.size * 0.5, 0, 2 * Math.PI, false);
-                c.fillStyle = this.color;
-                c.fill();
-                c.closePath(); 
+            c.arc(x, y, size * 0.5, 0, 2 * Math.PI, false);
+            c.fillStyle = this.color;
+            c.fill();
+            c.closePath(); 
         };
     }
 
@@ -412,18 +521,20 @@ class PaintBrush {
      * Adds event to document.
      */
     #init(){
-        this.parent.canvas.node.addEventListener('mouseup', function(event){
-            PaintBrush.#instance.isPressed = event.which === 1 ? true : false;
+        let self =  PaintBrush.#instance;
 
-            PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
-            PaintBrush.#instance.drawDot();
+        this.parent.canvas.node.addEventListener('mouseup', function(event){
+            self.isPressed = false;
+
+            self.#writeCoordsToInstance(event, self);
+            self.drawDot();
         });
 
         this.parent.canvas.node.addEventListener('mousemove', function(event){
-            PaintBrush.#instance.isPressed = event.which === 1 ? true : false;
+            self.isPressed = event.which === 1 ? true : false;
 
-            PaintBrush.#instance.#writeCoordsToInstance(event, PaintBrush.#instance);
-            PaintBrush.#instance.drawTrace();
+            self.#writeCoordsToInstance(event, self);
+            self.drawTrace();
         });
     }
 }
@@ -455,6 +566,8 @@ class PaintCanvas {
         this.node = this.#createCanvas(width, height);
         this.context = this.node.getContext('2d');
 
+        this.symmetryAxes = 1;
+
         this.#init();
     }
 
@@ -472,6 +585,36 @@ class PaintCanvas {
         return canvas;
     }
 
+    /**
+     * Returns canvas center point
+     * @returns [x, y]
+     */
+    getCenter(){
+        return [this.width / 2, this.height / 2];
+    }
+
+    /**
+     * Rotates given point around another point (for example, canvas center).
+     * @param {number} cx central point x
+     * @param {number} cy central point y
+     * @param {number} x target point x
+     * @param {number} y target point y
+     * @param {number} angle rotation angle (in gradus)
+     * @returns [x, y] with new coordinates
+     */
+    rotate(cx, cy, x, y, angle) {
+        let radians = (Math.PI / 180) * angle,
+            cos = Math.cos(radians),
+            sin = Math.sin(radians),
+            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+
+        return [Math.round(nx), Math.round(ny)];
+    }
+
+    /**
+     * Clear canvas inner.
+     */
     clear(){
         this.context.fillStyle = this.color;
         this.context.fillRect(0, 0, this.width, this.height)
