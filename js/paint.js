@@ -102,7 +102,7 @@ class PaintTools {
              *     description: Button scription,
              *     type: input | toggle | click - Type of interaction,
              *     render: Additional element inside',
-             *     action: callback function with access to: input - value, click, toggle - HTMLElement,
+             *     action: callback function with access to: input - inputNode, value, click, toggle - HTMLElement,
              * }
              * */ 
 
@@ -110,8 +110,15 @@ class PaintTools {
                 description: "Resize brush",
                 type: "input",
                 render: '<input placeholder="5">',
-                action: function(value){
-                    console.log(value);
+                action: function(inputNode, value){
+                    let maxSize = 99;
+
+                    // size range limitation
+                    value = value >= maxSize ? maxSize : value;
+                    value = value <= 0 ? 1 : value;
+
+                    inputNode.value = value;
+
                     PaintTools.#instance.parent.brush.setSize(value);
                 },
             },
@@ -234,13 +241,7 @@ class PaintTools {
                     let raw_value = toolElement.children[0].value;
                     let value = Number(raw_value.replace(/([a-zA-Z]|[а-яёА-ЯЁ]|\s)/gm, ''));
 
-                    // size range limitation
-                    value = value >= 50 ? 50 : value;
-                    value = value <= 0 ? 1 : value;
-
-                    toolElement.children[0].value = value;
-
-                    tools[tool].action(value);
+                    tools[tool].action(toolElement.children[0], value);
                 });
             } else {
             // actions by item clicking
