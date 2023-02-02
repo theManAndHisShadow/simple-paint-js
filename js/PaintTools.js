@@ -218,11 +218,14 @@ class PaintTools {
 
     #selectDefault(){
         let colors = this.node.children[0];
-        let firstColor = colors.children[0];
-        let tools = this.node.children[1];
-        let firstTool = tools.children[1];
+        let blackColor = colors.children[0];
 
-        firstColor.click();
-        firstTool.click();
+        let tools = this.node.children[1];
+        let brushTool = tools.children[1];
+        let symmetryDrawningTool = tools.children[2];
+
+        blackColor.click();
+        brushTool.click();
+        symmetryDrawningTool.click();
     }
 }
