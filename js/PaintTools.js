@@ -32,6 +32,7 @@ class PaintTools {
 
             "resize": {
                 description: "Resize brush",
+                tooltip: true,
                 type: "input",
                 render: '<input placeholder="2">',
                 action: function(inputNode, value){
@@ -50,6 +51,7 @@ class PaintTools {
             "brush": {
                 icon: "fa-paintbrush",
                 description: "Brush tool",
+                tooltip: true,
                 type: "toggle",
                 action: function(button){
                     PaintTools.#instance.parent.brush.setColor(PaintTools.#instance.pallete.selected);
@@ -59,6 +61,7 @@ class PaintTools {
             "symmetry-tool": {
                 icon: "fa-asterisk",
                 description: "Symmetry drawning tool",
+                tooltip: true,
                 type: "click",
                 action: function(button){
                     let self = PaintTools.#instance;
@@ -118,6 +121,7 @@ class PaintTools {
             "eraser": {
                 icon: "fa-eraser",
                 description: "Eraser tool",
+                tooltip: true,
                 type: "toggle",
                 action: function(button){
                     PaintTools.#instance.parent.brush.setColor('white');
@@ -127,6 +131,7 @@ class PaintTools {
             "new-canvas": {
                 icon: "fa-file",
                 description: "New canvas",
+                tooltip: true,
                 type: "click",
                 action: function(){
                     PaintTools.#instance.parent.canvas.clear();
@@ -136,6 +141,7 @@ class PaintTools {
             "undo": {
                 icon: "fa-undo",
                 description: "Undo",
+                tooltip: true,
                 type: "click",
                 action: function(){
                     let self = PaintTools.#instance;
@@ -150,6 +156,7 @@ class PaintTools {
             "redo": {
                 icon: "fa-redo",
                 description: "Redo",
+                tooltip: true,
                 type: "click",
                 action: function(){
                     let self = PaintTools.#instance;
@@ -191,14 +198,30 @@ class PaintTools {
         toolNames.forEach(tool => {
             let toolElement = document.createElement('div');
             let toolIcon = document.createElement('i');
+            let toolPrefix = 'tool_';
 
-            toolElement.setAttribute('title',  tools[tool].description);
+            toolElement.id = toolPrefix + tool;
             toolElement.setAttribute('data-type',  tools[tool].type);
             
             if(tools[tool].render) {
                 toolElement.innerHTML = tools[tool].render;
             } else {
                 toolIcon.classList = 'fa-solid ' + tools[tool].icon;
+            }
+            
+            if(tools[tool].tooltip === true) {
+                console.log(toolPrefix+tool);
+                let a = tippy(toolElement, {
+                    content: tools[tool].description,
+                    arrow: false,
+                    placement: 'right',
+                    theme: 'cobalt',
+                    offset: [0, 15],
+                  });
+
+                console.log(a);
+            } else {
+                toolElement.setAttribute('title',  tools[tool].description);
             }
             
             toolElement.appendChild(toolIcon);
