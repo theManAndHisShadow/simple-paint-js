@@ -132,6 +132,34 @@ class PaintTools {
                     PaintTools.#instance.parent.canvas.clear();
                 },
             },
+
+            "undo": {
+                icon: "fa-undo",
+                description: "Undo",
+                type: "click",
+                action: function(){
+                    let self = PaintTools.#instance;
+
+                    self.parent.restoreState(
+                        self.parent.states.undo, 
+                        self.parent.states.redo
+                    );
+                },
+            },
+
+            "redo": {
+                icon: "fa-redo",
+                description: "Redo",
+                type: "click",
+                action: function(){
+                    let self = PaintTools.#instance;
+
+                    self.parent.restoreState(
+                        self.parent.states.redo, 
+                        self.parent.states.undo
+                    );
+                },
+            },
         }
 
         this.selected = null;

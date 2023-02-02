@@ -214,16 +214,22 @@ class PaintBrush {
      * Adds event to document.
      */
     #init(){
-        let self =  PaintBrush.#instance;
+        let self = PaintBrush.#instance;
+        let canvas = self.parent.canvas;
 
-        this.parent.canvas.node.addEventListener('mouseup', function(event){
+        canvas.node.addEventListener('mouseup', function(event){
             self.isPressed = false;
 
             self.#writeCoordsToInstance(event, self);
             self.drawDot();
         });
 
-        this.parent.canvas.node.addEventListener('mousemove', function(event){
+        // when user staarts drawning - bofore save canvas state
+        canvas.node.addEventListener("mousedown", function(){
+            canvas.parent.saveState();
+        })
+
+       canvas.node.addEventListener('mousemove', function(event){
             self.isPressed = event.which === 1 ? true : false;
 
             self.#writeCoordsToInstance(event, self);
