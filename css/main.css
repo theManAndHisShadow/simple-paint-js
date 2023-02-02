@@ -100,13 +100,14 @@ body {
  }
 
 .tool-counter{
-    position: absolute;
+    position: relative;
     border-radius: 4px;
     background-color: #ffffff30;
     padding: 2px 3px 1px 3px;
     color: white;
     z-index: 9;
-    left: 27px;
-    bottom: 68px;
+    left: 9px;
+    bottom: -5px;
     font-size: 10px;
+    margin-left: -10px;
 }
