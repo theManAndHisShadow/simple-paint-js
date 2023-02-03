@@ -22,11 +22,12 @@ class PaintTools {
             /**
              * Example
              * "toolName": {
-             *     icon: Button icon (css class for font awesome)
-             *     description: Button scription,
-             *     type: input | toggle | click - Type of interaction,
-             *     render: Additional element inside',
-             *     action: callback function with access to: input - inputNode, value, click, toggle - HTMLElement,
+             *     icon: string - Button icon (css class for font awesome)
+             *     tooltip: boolean - Show Tippy.js tooltip or use deafult titile attr
+             *     description: string - Button scription,
+             *     type: string - input | toggle | click - Type of interaction,
+             *     render: string - Additional element inside (html code string),
+             *     action: fuction - callback function with access to: input - inputNode, value, click, toggle - HTMLElement,
              * }
              * */ 
 
@@ -202,6 +203,8 @@ class PaintTools {
 
             toolElement.id = toolPrefix + tool;
             toolElement.setAttribute('data-type',  tools[tool].type);
+            toolElement.appendChild(toolIcon);
+            toolsContainer.appendChild(toolElement);
             
             if(tools[tool].render) {
                 toolElement.innerHTML = tools[tool].render;
@@ -210,7 +213,6 @@ class PaintTools {
             }
             
             if(tools[tool].tooltip === true) {
-                console.log(toolPrefix+tool);
                 let a = tippy(toolElement, {
                     content: tools[tool].description,
                     arrow: false,
@@ -218,14 +220,9 @@ class PaintTools {
                     theme: 'cobalt',
                     offset: [0, 15],
                   });
-
-                console.log(a);
             } else {
                 toolElement.setAttribute('title',  tools[tool].description);
             }
-            
-            toolElement.appendChild(toolIcon);
-            toolsContainer.appendChild(toolElement);
 
             // use diff event to diff tool buttons types
             if(tools[tool].type === 'input'){
