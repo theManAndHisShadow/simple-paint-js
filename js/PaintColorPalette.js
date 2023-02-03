@@ -51,20 +51,22 @@ class PaintColorPalette {
             paletteContainer.appendChild(colorElement);
 
             colorElement.addEventListener('click', function(){
-               self.selected = self.colors[color];
-               self.parent.parent.brush.setColor(self.colors[color]);
+               if(self.parent.selected === "brush"){
+                    self.selected = self.colors[color];
+                    self.parent.parent.brush.setColor(self.colors[color]);
 
-               let className = 'selected__color';
+                    let className = 'selected__color';
 
-                // get all selected color
-                let allSelected = Array.from(document.getElementsByClassName(className));
+                    // get all selected color
+                    let allSelected = Array.from(document.getElementsByClassName(className));
 
-                // de-select all
-                allSelected.forEach(selected => { selected.classList.remove(className)});
+                    // de-select all
+                    allSelected.forEach(selected => { selected.classList.remove(className)});
 
-                // select color by clicking
-                let selected = colorElement.classList.contains(className);
-                colorElement.classList.add(className);
+                    // select color by clicking
+                    let selected = colorElement.classList.contains(className);
+                    colorElement.classList.add(className);
+               }
             });
         });
 
