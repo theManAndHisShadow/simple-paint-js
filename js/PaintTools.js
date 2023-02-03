@@ -27,6 +27,7 @@ class PaintTools {
              *     description: string - Button scription,
              *     type: string - input | toggle | click - Type of interaction,
              *     render: string - Additional element inside (html code string),
+             *     hotkey: string - ONLY FOR type click! hotkey trigger to invoke action()
              *     action: fuction - callback function with access to: input - inputNode, value, click, toggle - HTMLElement,
              * }
              * */ 
@@ -65,7 +66,7 @@ class PaintTools {
                 description: "Symmetry drawning tool [S]",
                 tooltip: true,
                 type: "click",
-                hotkey: ['S'],
+                hotkey: 'S',
                 action: function(button){
                     let self = PaintTools.#instance;
                     let canvas = self.parent.canvas;
@@ -246,7 +247,7 @@ class PaintTools {
 
                 // adding hotkeys functionality
                 document.addEventListener('keyup', event => {
-                    let hotKey = 'Key' + tools[tool].hotkey[0];
+                    let hotKey = 'Key' + tools[tool].hotkey;
 
                     if(event.code === hotKey) {
                         self.selectTool(tool);
