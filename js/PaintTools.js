@@ -126,7 +126,7 @@ class PaintTools {
                 description: "Eraser tool [E]",
                 tooltip: true,
                 type: "toggle",
-                hotkey: ['E'],
+                hotkey: 'E',
                 action: function(button){
                     PaintTools.#instance.parent.brush.setColor('white');
                 },
@@ -137,7 +137,7 @@ class PaintTools {
                 description: "New canvas [N]",
                 tooltip: true,
                 type: "click",
-                hotkey: ['N'],
+                hotkey: 'N',
                 action: function(){
                     PaintTools.#instance.parent.canvas.clear();
                 },
@@ -145,10 +145,10 @@ class PaintTools {
 
             "undo": {
                 icon: "fa-undo",
-                description: "Undo [CTRL] + [Z]",
+                description: "Undo [Z]",
                 tooltip: true,
                 type: "click",
-                hotkey: ['CTRL', 'Z'],
+                hotkey: 'Z',
                 action: function(){
                     let self = PaintTools.#instance;
 
@@ -161,10 +161,10 @@ class PaintTools {
 
             "redo": {
                 icon: "fa-redo",
-                description: "Redo [CTRL] + [SHIFT] + [Z]",
+                description: "Redo [X]",
                 tooltip: true,
                 type: "click",
-                hotkey: ['CTRL', 'SHIFT', 'Z'],
+                hotkey: 'X',
                 action: function(){
                     let self = PaintTools.#instance;
 
@@ -242,6 +242,15 @@ class PaintTools {
                 // actions by item clicking
                 toolElement.addEventListener('click', function(){
                     self.selectTool(tool);
+                });
+
+                // adding hotkeys functionality
+                document.addEventListener('keyup', event => {
+                    let hotKey = 'Key' + tools[tool].hotkey[0];
+
+                    if(event.code === hotKey) {
+                        self.selectTool(tool);
+                    }
                 });
             }
         });
