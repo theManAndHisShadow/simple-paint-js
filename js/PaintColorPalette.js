@@ -33,6 +33,17 @@ class PaintColorPalette {
         this.selected = 'black';
     }
 
+    /**
+     * Emulates user color selecting.
+     * @param {string} color hex
+     */
+    emulateSelecting(color){
+        let selector = `[data-color-value="${color}"]`;
+        let colorElement = document.querySelector(selector);
+        
+        colorElement.click();
+    }
+
     #create(){
         let paletteContainer = document.createElement('div');
         paletteContainer.classList = 'tools__palette-container';
