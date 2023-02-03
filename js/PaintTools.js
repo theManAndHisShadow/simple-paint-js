@@ -82,7 +82,7 @@ class PaintTools {
                         counterBadge = document.createElement('span');
                         counterBadge.id = "symmetry-tool__counter";
                         counterBadge.classList.add('tool-counter');
-                        counterBadge.setAttribute('items-counter-value', defaultValue);
+                        counterBadge.setAttribute('data-counter-value', defaultValue);
                         counterBadge.textContent = defaultValue;
                         button.appendChild(counterBadge);
 
@@ -111,13 +111,13 @@ class PaintTools {
                         });
 
                     } else {
-                        n = Number(counterBadge.getAttribute('items-counter-value'));
+                        n = Number(counterBadge.getAttribute('data-counter-value'));
                         n = n >= maxValue ? defaultValue : n + 1;
 
 
                         counterBadge.textContent = n;
                         canvas.symmetryAxes = n;
-                        counterBadge.setAttribute('items-counter-value', n);
+                        counterBadge.setAttribute('data-counter-value', n);
                     }
                 },
             },
@@ -210,7 +210,7 @@ class PaintTools {
             let toolPrefix = 'tool_';
 
             toolElement.id = toolPrefix + tool;
-            toolElement.setAttribute('items-type',  tools[tool].type);
+            toolElement.setAttribute('data-type',  tools[tool].type);
             toolElement.appendChild(toolIcon);
             toolsContainer.appendChild(toolElement);
 
