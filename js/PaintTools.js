@@ -234,32 +234,32 @@ class PaintTools {
                     tools[tool].action(toolElement.children[0], value);
                 });
             } else {
-            // actions by item clicking
-            toolElement.addEventListener('click', function(){
-                // execute tool action
-                tools[tool].action(toolElement);
+                // actions by item clicking
+                toolElement.addEventListener('click', function(){
+                    // execute tool action
+                    tools[tool].action(toolElement);
 
-                if(tools[tool].type === "toggle"){
-                    let className = 'selected__tool';
+                    if(tools[tool].type === "toggle"){
+                        let className = 'selected__tool';
 
-                    // get all selected items
-                    let allSelected = Array.from(document.getElementsByClassName(className));
+                        // get all selected items
+                        let allSelected = Array.from(document.getElementsByClassName(className));
 
-                    // de-select all
-                    allSelected.forEach(selected => { selected.classList.remove(className)});
+                        // de-select all
+                        allSelected.forEach(selected => { selected.classList.remove(className)});
 
-                    // select item by clicking
-                    let selected = toolElement.classList.contains(className);
-                    toolElement.classList.add(className);
+                        // select item by clicking
+                        let selected = toolElement.classList.contains(className);
+                        toolElement.classList.add(className);
 
-                    // set selected tool
-                    if(selected){
-                        PaintTools.#instance.selected = null
-                    } else {
-                        PaintTools.#instance.selected = tool;
+                        // set selected tool
+                        if(selected){
+                            PaintTools.#instance.selected = null
+                        } else {
+                            PaintTools.#instance.selected = tool;
+                        }
                     }
-                }
-            })
+                });
             }
         });
     }
@@ -272,8 +272,8 @@ class PaintTools {
         let brushTool = tools.children[1];
         let symmetryDrawningTool = tools.children[2];
 
-        blackColor.click();
         brushTool.click();
+        blackColor.click();
         symmetryDrawningTool.click();
     }
 }
