@@ -18,7 +18,7 @@ class PaintTools {
 
         this.pallete = new PaintColorPalette(this);
 
-        this.data = {
+        this.items = {
             /**
              * Example
              * "toolName": {
@@ -82,7 +82,7 @@ class PaintTools {
                         counterBadge = document.createElement('span');
                         counterBadge.id = "symmetry-tool__counter";
                         counterBadge.classList.add('tool-counter');
-                        counterBadge.setAttribute('data-counter-value', defaultValue);
+                        counterBadge.setAttribute('items-counter-value', defaultValue);
                         counterBadge.textContent = defaultValue;
                         button.appendChild(counterBadge);
 
@@ -111,13 +111,13 @@ class PaintTools {
                         });
 
                     } else {
-                        n = Number(counterBadge.getAttribute('data-counter-value'));
+                        n = Number(counterBadge.getAttribute('items-counter-value'));
                         n = n >= maxValue ? defaultValue : n + 1;
 
 
                         counterBadge.textContent = n;
                         canvas.symmetryAxes = n;
-                        counterBadge.setAttribute('data-counter-value', n);
+                        counterBadge.setAttribute('items-counter-value', n);
                     }
                 },
             },
@@ -193,7 +193,7 @@ class PaintTools {
 
     #addTools(){
         let self = PaintTools.#instance;
-        let tools = self.data;
+        let tools = self.items;
 
         let toolNames = Object.keys(tools);
 
@@ -210,7 +210,7 @@ class PaintTools {
             let toolPrefix = 'tool_';
 
             toolElement.id = toolPrefix + tool;
-            toolElement.setAttribute('data-type',  tools[tool].type);
+            toolElement.setAttribute('items-type',  tools[tool].type);
             toolElement.appendChild(toolIcon);
             toolsContainer.appendChild(toolElement);
 
@@ -263,7 +263,7 @@ class PaintTools {
      */
     selectTool(toolName){
         let self = PaintTools.#instance;
-        let tools = self.data;
+        let tools = self.items;
         let toolElement = tools[toolName].node;
 
         if(tools[toolName].type === 'input'){
