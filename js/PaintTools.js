@@ -51,9 +51,10 @@ class PaintTools {
 
             "brush": {
                 icon: "fa-paintbrush",
-                description: "Brush tool",
+                description: "Brush tool [B]",
                 tooltip: true,
                 type: "toggle",
+                hotkey: ['B'],
                 action: function(button){
                     PaintTools.#instance.parent.brush.setColor(PaintTools.#instance.pallete.selected);
                 },
@@ -61,9 +62,10 @@ class PaintTools {
 
             "symmetry-tool": {
                 icon: "fa-asterisk",
-                description: "Symmetry drawning tool",
+                description: "Symmetry drawning tool [S]",
                 tooltip: true,
                 type: "click",
+                hotkey: ['S'],
                 action: function(button){
                     let self = PaintTools.#instance;
                     let canvas = self.parent.canvas;
@@ -121,9 +123,10 @@ class PaintTools {
 
             "eraser": {
                 icon: "fa-eraser",
-                description: "Eraser tool",
+                description: "Eraser tool [E]",
                 tooltip: true,
                 type: "toggle",
+                hotkey: ['E'],
                 action: function(button){
                     PaintTools.#instance.parent.brush.setColor('white');
                 },
@@ -131,9 +134,10 @@ class PaintTools {
 
             "new-canvas": {
                 icon: "fa-file",
-                description: "New canvas",
+                description: "New canvas [N]",
                 tooltip: true,
                 type: "click",
+                hotkey: ['N'],
                 action: function(){
                     PaintTools.#instance.parent.canvas.clear();
                 },
@@ -141,9 +145,10 @@ class PaintTools {
 
             "undo": {
                 icon: "fa-undo",
-                description: "Undo",
+                description: "Undo [CTRL] + [Z]",
                 tooltip: true,
                 type: "click",
+                hotkey: ['CTRL', 'Z'],
                 action: function(){
                     let self = PaintTools.#instance;
 
@@ -156,9 +161,10 @@ class PaintTools {
 
             "redo": {
                 icon: "fa-redo",
-                description: "Redo",
+                description: "Redo [CTRL] + [SHIFT] + [Z]",
                 tooltip: true,
                 type: "click",
+                hotkey: ['CTRL', 'SHIFT', 'Z'],
                 action: function(){
                     let self = PaintTools.#instance;
 
@@ -185,7 +191,8 @@ class PaintTools {
     }
 
     #addTools(){
-        let tools = this.data;
+        let self = PaintTools.#instance;
+        let tools = self.data;
 
         let toolNames = Object.keys(tools);
 
@@ -205,6 +212,8 @@ class PaintTools {
             toolElement.setAttribute('data-type',  tools[tool].type);
             toolElement.appendChild(toolIcon);
             toolsContainer.appendChild(toolElement);
+
+            tools[tool].node = toolElement;
             
             if(tools[tool].render) {
                 toolElement.innerHTML = tools[tool].render;
@@ -227,41 +236,57 @@ class PaintTools {
             // use diff event to diff tool buttons types
             if(tools[tool].type === 'input'){
                 toolElement.children[0].addEventListener('change', function(){
-                    // clear input
-                    let raw_value = toolElement.children[0].value;
-                    let value = Number(raw_value.replace(/([a-zA-Z]|[а-яёА-ЯЁ]|\s)/gm, ''));
-
-                    tools[tool].action(toolElement.children[0], value);
+                    self.selectTool(tool);
                 });
             } else {
                 // actions by item clicking
                 toolElement.addEventListener('click', function(){
-                    // execute tool action
-                    tools[tool].action(toolElement);
-
-                    if(tools[tool].type === "toggle"){
-                        let className = 'selected__tool';
-
-                        // get all selected items
-                        let allSelected = Array.from(document.getElementsByClassName(className));
-
-                        // de-select all
-                        allSelected.forEach(selected => { selected.classList.remove(className)});
-
-                        // select item by clicking
-                        let selected = toolElement.classList.contains(className);
-                        toolElement.classList.add(className);
-
-                        // set selected tool
-                        if(selected){
-                            PaintTools.#instance.selected = null
-                        } else {
-                            PaintTools.#instance.selected = tool;
-                        }
-                    }
+                    self.selectTool(tool);
                 });
             }
         });
+    }
+
+    /**
+     * Activates seleted tool.
+     * @param {string} toolName 
+     */
+    selectTool(toolName){
+        let self = PaintTools.#instance;
+        let tools = self.data;
+        let toolElement = tools[toolName].node;
+
+        if(tools[toolName].type === 'input'){
+             // clear input
+             let raw_value = toolElement.children[0].value;
+             let value = Number(raw_value.replace(/([a-zA-Z]|[а-яёА-ЯЁ]|\s)/gm, ''));
+
+             tools[toolName].action(toolElement.children[0], value);
+        } else {
+            // execute tool action
+            tools[toolName].action(toolElement);
+
+            if(tools[toolName].type === "toggle"){
+                let className = 'selected__tool';
+
+                // get all selected items
+                let allSelected = Array.from(document.getElementsByClassName(className));
+
+                // de-select all
+                allSelected.forEach(selected => { selected.classList.remove(className)});
+
+                // select item by clicking
+                let selected = toolElement.classList.contains(className);
+                toolElement.classList.add(className);
+
+                // set selected tool
+                if(selected){
+                    PaintTools.#instance.selected = null
+                } else {
+                    PaintTools.#instance.selected = toolName;
+                }
+            }
+        }
     }
 
     #selectDefault(){
