@@ -36,6 +36,7 @@ class PaintApp {
         let size = self.brush.size;
 
         let globalState = {
+            
             brush: {
                 color: color,
                 size: size,
@@ -73,7 +74,7 @@ class PaintApp {
                 );
                 
 
-
+                self.tools.pallete.emulateSelecting(restoredGlobalState.brush.color);
                 self.brush.setColor(restoredGlobalState.brush.color);
                 self.brush.setSize(restoredGlobalState.brush.size);
             }
