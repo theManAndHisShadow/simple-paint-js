@@ -35,7 +35,7 @@ class PaintColorPalette {
                 green: '#4caf50',
                 blue: '#2196f3',
                 violet: '#673ab7',
-                white: 'white'
+                "light-gray":'#d7d5d5',
             },
             {
                 "gray": '#757575',
@@ -43,9 +43,9 @@ class PaintColorPalette {
                 "light-orange": '#ff8761',
                 "light-yellow":' #ffd450',
                 "light-green": '#75b277',
-                "light-blue": '#6bc9d5',
+                "light-blue": '#56aef4',
                 "light-violet": '#9575cd',
-                "light-gray":'#d7d5d5',
+                white: 'white'
             }
         ]
 
@@ -93,18 +93,29 @@ class PaintColorPalette {
                         self.selected = column[color];
                         self.parent.parent.brush.setColor(column[color]);
     
-                        let className = 'selected__color';
+                        let className = 'selected_color';
     
                         // get all selected color
                         let allSelected = Array.from(document.getElementsByClassName(className));
     
                         // de-select all
-                        allSelected.forEach(selected => { selected.classList.remove(className)});
+                        allSelected.forEach(selected => { 
+                            selected.classList.remove(className)
+                            selected.innerHTML = '';
+                        });
     
                         // select color by clicking
-                        // let selected = colorElement.classList.contains(className);
-                        // colorElement.classList.add(className);
-                   }
+                        let selected = colorElement.classList.contains(className);
+                        colorElement.classList.add(className);
+
+                        
+                        let colorSelectedCross = document.createElement('span');
+                        colorSelectedCross.classList.add('selected_color__mark')
+
+                        colorElement.appendChild(colorSelectedCross);
+
+                        if(color == 'black' || /dark-/gm.test(color)) colorSelectedCross.style.background = 'white';
+                    }
                 });
             });
 
